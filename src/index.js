@@ -17,8 +17,12 @@ function clearData(output) {
   }
 
 const seachCountry = ev => {
-    const name = textInput.value.trim();
-    
+    console.log(ev);
+    const name = ev.target.value.trim();
+    if (name === '') {
+        return;
+    }
+
     fetchCountries(name)
     .then(data => { 
         createMarkup(data);
@@ -26,19 +30,32 @@ const seachCountry = ev => {
     .catch(error => {
         if (name !== '') {
             Notiflix.Notify.failure('Oops, there is no country with that name');
+            
+            clearData(countryList);
+            clearData(countryInfo);
+        }    
+            if (name === '') {
+                Notiflix.Notify.failure('Oops, there is no country with that name');    
+                
+                clearData(countryList);
+                clearData(countryInfo);
         }
+
+
     });
     ev.preventDefault();
  }
 
 function createMarkup(arr) {
     if (arr.length > 10) {
+
         clearData(countryList);
         clearData(countryInfo);
 
         Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
     } else 
     if (arr.length > 1 && arr.length <= 10) {
+
         clearData(countryList);
         clearData(countryInfo);
     
@@ -54,6 +71,7 @@ function createMarkup(arr) {
 
     countryList.insertAdjacentHTML('beforeend', markupStart)
 } else {
+
     clearData(countryList);
     clearData(countryInfo);
     
@@ -64,8 +82,7 @@ function createMarkup(arr) {
         population,
         languages,  
     }) => 
-    `
-    <div class="country-prew">
+    `<div class="country-prew">
             <img 
                 src="${flags.svg}" 
                 alt="${name.official}" 
@@ -83,5 +100,3 @@ function createMarkup(arr) {
 }
 
 textInput.addEventListener('input', debounce(seachCountry, DEBOUNCE_DELAY));
-
-
